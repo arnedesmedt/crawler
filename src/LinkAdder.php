@@ -2,6 +2,7 @@
 
 namespace Spatie\Crawler;
 
+use Psr\Http\Message\ResponseInterface;
 use Tree\Node\Node;
 use GuzzleHttp\Psr7\Uri;
 use InvalidArgumentException;
@@ -17,6 +18,18 @@ class LinkAdder
     public function __construct(Crawler $crawler)
     {
         $this->crawler = $crawler;
+    }
+
+    public function addFromResponse(ResponseInterFace $response, UriInterface $foundOnUrl)
+    {
+        if ($response->getBody()->getContents() === '' && $response->getStatusCode() === 302) {
+            $crawlUrl = CrawlUrl::create(
+                new Uri($response->getHeader('Location')[0]),
+                $foundOnUrl
+            );
+
+            $this->crawler->addToCrawlQueue($crawlUrl);
+        }
     }
 
     public function addFromHtml(string $html, UriInterface $foundOnUrl)

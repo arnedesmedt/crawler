@@ -57,6 +57,7 @@ class CrawlRequestFulfilled
 
         $body = $this->convertBodyToString($response->getBody(), $this->crawler->getMaximumResponseSize());
 
+        $this->linkAdder->addFromResponse($response, $crawlUrl->url);
         $this->linkAdder->addFromHtml($body, $crawlUrl->url);
     }
 
